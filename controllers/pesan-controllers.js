@@ -210,7 +210,7 @@ const updateStatusPesan = async (req, res, next) => {
 
   let stok;
   try {
-    stok = await Pesan.findOne({
+    stok = await Stok.findOne({
       idPangkalan: `${idPangkalan}`,
     });
   } catch (err) {
@@ -228,21 +228,40 @@ const updateStatusPesan = async (req, res, next) => {
   let y = today.getFullYear();
   let date = `${d} ${month} ${y}`;
 
+  let gas3Kg;
+  let gas12Kg;
+  let brightGas;
+  let total;
   if (stok) {
+    // console.log("stok: ", stok);
     if (status === "TERIMA") {
-      stok.totalStok = stok.totalStok - pesan.total;
-      stok.gas3kg = stok.gas3Kg - pesan.gas3Kg;
-      stok.gas12Kg = stok.gas12Kg - pesan.gas12Kg;
-      stok.brightGas = stok.brightGas - pesan.brightGas;
-      stok.save();
+      total = stok.totalStok - pesan.total;
+      gas3Kg = stok.gas3Kg - pesan.gas3Kg;
+      gas12Kg = stok.gas12Kg - pesan.gas12Kg;
+      brightGas = stok.brightGas - pesan.brightGas;
+      stok.gas3Kg = gas3Kg;
+      stok.gas12Kg = gas12Kg;
+      stok.brightGas = brightGas;
+      stok.totalStok = total;
+      // stok.save();
     }
   }
 
   pesan.tanggal = date;
   pesan.status = status;
 
+  console.log("total: ", stok.totalStok);
+  console.log("gas3Kg: ", stok.gas3Kg);
+  console.log("gas12Kg: ", stok.gas12Kg);
+  console.log("brightGas: ", stok.brightGas);
+
   try {
-    await pesan.save();
+    if (stok) {
+      await pesan.save();
+      await stok.save();
+    } else {
+      await pesan.save();
+    }
   } catch (err) {
     const error = new HttpError(
       "Create pesan failed, please try again later.",
