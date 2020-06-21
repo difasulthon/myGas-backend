@@ -1,0 +1,8 @@
+{
+  "env": {
+    "DB_USER": "difa",
+    "DB_PASSWORD": "difa",
+    "DB_NAME": "myGas",
+    "JWT_KEY": "supersecret_dont_share"
+  }
+}
